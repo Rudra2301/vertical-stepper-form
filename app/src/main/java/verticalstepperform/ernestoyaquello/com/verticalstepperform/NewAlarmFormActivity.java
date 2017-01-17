@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
 import ernestoyaquello.com.verticalstepperform.fragments.BackConfirmationFragment;
@@ -148,6 +149,14 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
     }
 
     @Override
+    public boolean onContinue(int stepNumber) {
+        //You can further do some calculations or validate the user input
+        //and return true or false to go next or stay on same step accordingly
+        Toast.makeText(this, "Validation Done Step : " + stepNumber, Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
     public void sendData() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(true);
@@ -193,7 +202,8 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
         titleEditText.setSingleLine(true);
         titleEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -201,12 +211,13 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
         titleEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(checkTitleStep(v.getText().toString())) {
+                if (checkTitleStep(v.getText().toString())) {
                     verticalStepperForm.goToNextStep();
                 }
                 return false;
@@ -250,10 +261,10 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
                 R.layout.step_days_of_week_layout, null, false);
 
         String[] weekDays = getResources().getStringArray(R.array.week_days);
-        for(int i = 0; i < weekDays.length; i++) {
+        for (int i = 0; i < weekDays.length; i++) {
             final int index = i;
             final LinearLayout dayLayout = getDayLayout(index);
-            if(index < 5) {
+            if (index < 5) {
                 activateDay(index, dayLayout, false);
             } else {
                 deactivateDay(index, dayLayout, false);
@@ -262,7 +273,7 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
             dayLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if((boolean)v.getTag()) {
+                    if ((boolean) v.getTag()) {
                         deactivateDay(index, dayLayout, true);
                     } else {
                         activateDay(index, dayLayout, true);
@@ -289,7 +300,7 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
     private boolean checkTitleStep(String title) {
         boolean titleIsCorrect = false;
 
-        if(title.length() >= MIN_CHARACTERS_TITLE) {
+        if (title.length() >= MIN_CHARACTERS_TITLE) {
             titleIsCorrect = true;
 
             verticalStepperForm.setActiveStepAsCompleted();
@@ -331,7 +342,7 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
         TextView dayText = (TextView) dayLayout.findViewById(R.id.day);
         dayText.setTextColor(Color.rgb(255, 255, 255));
 
-        if(check) {
+        if (check) {
             checkDays();
         }
     }
@@ -347,20 +358,20 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
         int colour = ContextCompat.getColor(getBaseContext(), R.color.colorPrimary);
         dayText.setTextColor(colour);
 
-        if(check) {
+        if (check) {
             checkDays();
         }
     }
 
     private boolean checkDays() {
         boolean thereIsAtLeastOneDaySelected = false;
-        for(int i = 0; i < weekDays.length && !thereIsAtLeastOneDaySelected; i++) {
-            if(weekDays[i]) {
+        for (int i = 0; i < weekDays.length && !thereIsAtLeastOneDaySelected; i++) {
+            if (weekDays[i]) {
                 verticalStepperForm.setStepAsCompleted(DAYS_STEP_NUM);
                 thereIsAtLeastOneDaySelected = true;
             }
         }
-        if(!thereIsAtLeastOneDaySelected) {
+        if (!thereIsAtLeastOneDaySelected) {
             verticalStepperForm.setStepAsUncompleted(DAYS_STEP_NUM, null);
         }
 
@@ -376,7 +387,7 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
     // CONFIRMATION DIALOG WHEN USER TRIES TO LEAVE WITHOUT SUBMITTING
 
     private void confirmBack() {
-        if(confirmBack && verticalStepperForm.isAnyStepCompleted()) {
+        if (confirmBack && verticalStepperForm.isAnyStepCompleted()) {
             BackConfirmationFragment backConfirmation = new BackConfirmationFragment();
             backConfirmation.setOnConfirmBack(new DialogInterface.OnClickListener() {
                 @Override
@@ -407,7 +418,7 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home && confirmBack) {
+        if (item.getItemId() == android.R.id.home && confirmBack) {
             confirmBack();
             return true;
         }
@@ -415,7 +426,7 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         confirmBack();
     }
 
@@ -437,23 +448,23 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
         // Saving title field
-        if(titleEditText != null) {
+        if (titleEditText != null) {
             savedInstanceState.putString(STATE_TITLE, titleEditText.getText().toString());
         }
 
         // Saving description field
-        if(descriptionEditText != null) {
+        if (descriptionEditText != null) {
             savedInstanceState.putString(STATE_DESCRIPTION, descriptionEditText.getText().toString());
         }
 
         // Saving time field
-        if(time != null) {
+        if (time != null) {
             savedInstanceState.putInt(STATE_TIME_HOUR, time.first);
             savedInstanceState.putInt(STATE_TIME_MINUTES, time.second);
         }
 
         // Saving week days field
-        if(weekDays != null) {
+        if (weekDays != null) {
             savedInstanceState.putBooleanArray(STATE_WEEK_DAYS, weekDays);
         }
 
@@ -465,25 +476,25 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
     public void onRestoreInstanceState(Bundle savedInstanceState) {
 
         // Restoration of title field
-        if(savedInstanceState.containsKey(STATE_TITLE)) {
+        if (savedInstanceState.containsKey(STATE_TITLE)) {
             String title = savedInstanceState.getString(STATE_TITLE);
             titleEditText.setText(title);
         }
 
         // Restoration of description field
-        if(savedInstanceState.containsKey(STATE_DESCRIPTION)) {
+        if (savedInstanceState.containsKey(STATE_DESCRIPTION)) {
             String description = savedInstanceState.getString(STATE_DESCRIPTION);
             descriptionEditText.setText(description);
         }
 
         // Restoration of time field
-        if(savedInstanceState.containsKey(STATE_TIME_HOUR)
+        if (savedInstanceState.containsKey(STATE_TIME_HOUR)
                 && savedInstanceState.containsKey(STATE_TIME_MINUTES)) {
             int hour = savedInstanceState.getInt(STATE_TIME_HOUR);
             int minutes = savedInstanceState.getInt(STATE_TIME_MINUTES);
             time = new Pair<>(hour, minutes);
             setTime(hour, minutes);
-            if(timePicker == null) {
+            if (timePicker == null) {
                 setTimePicker(hour, minutes);
             } else {
                 timePicker.updateTime(hour, minutes);
@@ -491,7 +502,7 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
         }
 
         // Restoration of week days field
-        if(savedInstanceState.containsKey(STATE_WEEK_DAYS)) {
+        if (savedInstanceState.containsKey(STATE_WEEK_DAYS)) {
             weekDays = savedInstanceState.getBooleanArray(STATE_WEEK_DAYS);
             if (weekDays != null) {
                 for (int i = 0; i < weekDays.length; i++) {
