@@ -51,7 +51,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
     protected int stepTitleTextColor;
     protected int stepSubtitleTextColor;
     protected int buttonTextColor;
-    protected String submitText = getResources().getString(R.string.vertical_form_stepper_form_confirm_button);
     protected int buttonPressedTextColor;
     protected int errorMessageTextColor;
     protected boolean displayBottomNavigation;
@@ -67,7 +66,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
     protected List<View> stepContentViews;
     protected List<TextView> stepsTitlesViews;
     protected List<TextView> stepsSubtitlesViews;
-    protected AppCompatButton confirmationButton;
     protected ProgressBar progressBar;
     protected AppCompatImageButton previousStepButton, nextStepButton;
     protected RelativeLayout bottomNavigation;
@@ -381,7 +379,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
 
         this.alphaOfDisabledElements = 0.25f;
         this.buttonTextColor = Color.rgb(255, 255, 255);
-        this.submitText = submitText;
         this.buttonPressedTextColor = Color.rgb(255, 255, 255);
         this.stepNumberTextColor = Color.rgb(255, 255, 255);
         this.stepTitleTextColor = Color.rgb(33, 33, 33);
@@ -436,7 +433,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         this.alphaOfDisabledElements = 0.25f;
         this.buttonBackgroundColor = buttonBackgroundColor;
         this.buttonTextColor = buttonTextColor;
-        this.submitText = submitText;
         this.buttonPressedBackgroundColor = buttonPressedBackgroundColor;
         this.buttonPressedTextColor = buttonPressedTextColor;
         this.stepNumberBackgroundColor = stepNumberBackgroundColor;
@@ -468,7 +464,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         this.stepTitleTextColor = builder.stepTitleTextColor;
         this.stepSubtitleTextColor = builder.stepSubtitleTextColor;
         this.buttonTextColor = builder.buttonTextColor;
-        this.submitText = builder.submitText;
         this.buttonPressedTextColor = builder.buttonPressedTextColor;
         this.errorMessageTextColor = builder.errorMessageTextColor;
         this.displayBottomNavigation = builder.displayBottomNavigation;
@@ -556,41 +551,13 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
 
     protected void setUpStep(int stepNumber) {
         LinearLayout stepLayout = createStepLayout(stepNumber);
-        if (stepNumber < numberOfSteps) {
-            // The content of the step is the corresponding custom view previously created
-            RelativeLayout stepContent = (RelativeLayout) stepLayout.findViewById(R.id.step_content);
-            stepContent.addView(stepContentViews.get(stepNumber));
-        } else {
-            setUpStepLayoutAsConfirmationStepLayout(stepLayout);
-        }
+        RelativeLayout stepContent = (RelativeLayout) stepLayout.findViewById(R.id.step_content);
+        stepContent.addView(stepContentViews.get(stepNumber));
         addStepToContent(stepLayout);
     }
 
     protected void addStepToContent(LinearLayout stepLayout) {
         content.addView(stepLayout);
-    }
-
-    protected void setUpStepLayoutAsConfirmationStepLayout(LinearLayout stepLayout) {
-        LinearLayout stepLeftLine = (LinearLayout) stepLayout.findViewById(R.id.vertical_line);
-        LinearLayout stepLeftLine2 = (LinearLayout) stepLayout.findViewById(R.id.vertical_line_subtitle);
-        confirmationButton = (AppCompatButton) stepLayout.findViewById(R.id.next_step);
-
-        stepLeftLine.setVisibility(View.INVISIBLE);
-        stepLeftLine2.setVisibility(View.INVISIBLE);
-
-        disableConfirmationButton();
-
-        confirmationButton.setText( submitText);
-
-        confirmationButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                prepareSendingAndSend();
-            }
-        });
-
-        // Some content could be added to the final step inside stepContent layout
-        // RelativeLayout stepContent = (RelativeLayout) stepLayout.findViewById(R.id.step_content);
     }
 
     protected LinearLayout createStepLayout(final int stepNumber) {
@@ -867,11 +834,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         }
     }
 
-    protected void disableConfirmationButton() {
-        confirmationButton.setEnabled(false);
-        confirmationButton.setAlpha(alphaOfDisabledElements);
-    }
-
     protected void hideSoftKeyboard() {
         activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         View view = activity.getCurrentFocus();
@@ -879,21 +841,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-    }
-
-    protected void prepareSendingAndSend() {
-        displayDoneIconInConfirmationStep();
-        disableConfirmationButton();
-        displayMaxProgress();
-        verticalStepperFormImplementation.sendData();
-    }
-
-    protected void displayDoneIconInConfirmationStep() {
-        LinearLayout confirmationStepLayout = stepLayouts.get(stepLayouts.size() - 1);
-        ImageView stepDone = (ImageView) confirmationStepLayout.findViewById(R.id.step_done);
-        TextView stepNumberTextView = (TextView) confirmationStepLayout.findViewById(R.id.step_number);
-        stepDone.setVisibility(View.VISIBLE);
-        stepNumberTextView.setVisibility(View.INVISIBLE);
     }
 
     protected void restoreFormState() {
@@ -1036,7 +983,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         protected int stepTitleTextColor = Color.rgb(33, 33, 33);
         protected int stepSubtitleTextColor = Color.rgb(162, 162, 162);
         protected int buttonTextColor = Color.rgb(255, 255, 255);
-        protected String submitText ;
         protected int buttonPressedTextColor = Color.rgb(255, 255, 255);
         protected int errorMessageTextColor = Color.rgb(175, 18, 18);
         protected boolean displayBottomNavigation = true;
@@ -1053,7 +999,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
             this.steps = steps;
             this.verticalStepperFormImplementation = stepperImplementation;
             this.activity = activity;
-            this.submitText=activity.getResources().getString(R.string.vertical_form_stepper_form_confirm_button);
         }
 
         /**
@@ -1171,16 +1116,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
          */
         public Builder buttonTextColor(int buttonTextColor) {
             this.buttonTextColor = buttonTextColor;
-            return this;
-        }
-
-        /**
-         * Set the text of the last button
-         * @param buttonText text value of the submit button
-         * @return the builder instance
-         */
-        public Builder submitText(String buttonText) {
-            this.submitText= buttonText;
             return this;
         }
 

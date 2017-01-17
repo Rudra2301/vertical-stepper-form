@@ -96,7 +96,6 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
                 .primaryColor(colorPrimary)
                 .primaryDarkColor(colorPrimaryDark)
                 .displayBottomNavigation(true)
-                .submitText("Let's go")
                 .init();
 
     }
@@ -154,15 +153,6 @@ public class NewAlarmFormActivity extends AppCompatActivity implements VerticalS
         //and return true or false to go next or stay on same step accordingly
         Toast.makeText(this, "Validation Done Step : " + stepNumber, Toast.LENGTH_SHORT).show();
         return true;
-    }
-
-    @Override
-    public void sendData() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(true);
-        progressDialog.show();
-        progressDialog.setMessage(getString(R.string.vertical_form_stepper_form_sending_data_message));
-        executeDataSending();
     }
 
     // OTHER METHODS USED TO MAKE THIS EXAMPLE WORK

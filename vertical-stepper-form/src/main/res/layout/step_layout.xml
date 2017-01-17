@@ -44,7 +44,8 @@
             android:layout_alignLeft="@id/circle"
             android:layout_alignStart="@id/circle"
             android:layout_alignTop="@id/circle"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/step_title"
