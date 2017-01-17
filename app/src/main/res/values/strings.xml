@@ -24,7 +24,6 @@
         <item>Description of the alarm</item>
         <item>Time when the alarm will go off</item>
         <item>Week schedule of the alarm</item>
-        <item>Week schedule of the alarm</item>
     </string-array>
     <string-array name="week_days">
         <item>M</item>
