@@ -282,10 +282,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
             disableStepHeader(stepLayout);
         }
 
-        if (stepNumber < numberOfSteps) {
-            setStepAsUncompleted(numberOfSteps, null);
-        }
-
         if (errorMessage != null && !errorMessage.equals("")) {
             LinearLayout errorContainer = (LinearLayout) stepLayout.findViewById(R.id.error_container);
             TextView errorTextView = (TextView) errorContainer.findViewById(R.id.error_message);
@@ -542,7 +538,7 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         } else {
             this.stepsSubtitles = null;
         }
-        numberOfSteps = steps.length - 1;
+        numberOfSteps = steps.length;
         setAuxVars();
     }
 
@@ -592,8 +588,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         for (int i = 0; i < numberOfSteps; i++) {
             setUpStep(i);
         }
-        // Set up confirmation step
-        setUpStep(numberOfSteps);
     }
 
     protected void setUpStep(int stepNumber) {
@@ -602,22 +596,12 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
             // The content of the step is the corresponding custom view previously created
             RelativeLayout stepContent = (RelativeLayout) stepLayout.findViewById(R.id.step_content);
             stepContent.addView(stepContentViews.get(stepNumber));
-        } else {
-            setUpStepLayoutAsConfirmationStepLayout(stepLayout);
         }
         addStepToContent(stepLayout);
     }
 
     protected void addStepToContent(LinearLayout stepLayout) {
         content.addView(stepLayout);
-    }
-
-    protected void setUpStepLayoutAsConfirmationStepLayout(LinearLayout stepLayout) {
-        LinearLayout stepLeftLine = (LinearLayout) stepLayout.findViewById(R.id.vertical_line);
-        LinearLayout stepLeftLine2 = (LinearLayout) stepLayout.findViewById(R.id.vertical_line_subtitle);
-
-        stepLeftLine.setVisibility(View.INVISIBLE);
-        stepLeftLine2.setVisibility(View.INVISIBLE);
     }
 
     protected LinearLayout createStepLayout(final int stepNumber) {
@@ -718,10 +702,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
 
             scrollToActiveStep(!restoration);
 
-            if (stepNumber == numberOfSteps) {
-                setStepAsCompleted(stepNumber);
-            }
-
             verticalStepperFormImplementation.onStepOpening(stepNumber);
         }
     }
@@ -730,13 +710,17 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         if (smoothScroll) {
             stepsScrollView.post(new Runnable() {
                 public void run() {
-                    stepsScrollView.smoothScrollTo(0, stepLayouts.get(stepNumber).getTop());
+                    if (stepNumber != numberOfSteps) {
+                        stepsScrollView.smoothScrollTo(0, stepLayouts.get(stepNumber).getTop());
+                    }
                 }
             });
         } else {
             stepsScrollView.post(new Runnable() {
                 public void run() {
-                    stepsScrollView.scrollTo(0, stepLayouts.get(stepNumber).getTop());
+                    if (stepNumber != numberOfSteps) {
+                        stepsScrollView.scrollTo(0, stepLayouts.get(stepNumber).getTop());
+                    }
                 }
             });
         }
@@ -1039,7 +1023,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         protected int stepTitleTextColor = Color.rgb(33, 33, 33);
         protected int stepSubtitleTextColor = Color.rgb(162, 162, 162);
         protected int buttonTextColor = Color.rgb(255, 255, 255);
-        protected String submitText;
         protected int buttonPressedTextColor = Color.rgb(255, 255, 255);
         protected int errorMessageTextColor = Color.rgb(175, 18, 18);
         protected boolean displayBottomNavigation = true;
@@ -1058,7 +1041,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
             this.stepsButtonTexts = stepsButtonTexts;
             this.verticalStepperFormImplementation = stepperImplementation;
             this.activity = activity;
-            this.submitText = activity.getResources().getString(R.string.vertical_form_stepper_form_confirm_button);
         }
 
         /**
@@ -1189,17 +1171,6 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
          */
         public Builder buttonTextColor(int buttonTextColor) {
             this.buttonTextColor = buttonTextColor;
-            return this;
-        }
-
-        /**
-         * Set the text of the last button
-         *
-         * @param buttonText text value of the submit button
-         * @return the builder instance
-         */
-        public Builder submitText(String buttonText) {
-            this.submitText = buttonText;
             return this;
         }
 
