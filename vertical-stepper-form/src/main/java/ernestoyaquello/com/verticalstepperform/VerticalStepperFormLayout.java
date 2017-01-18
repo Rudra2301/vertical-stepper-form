@@ -234,8 +234,8 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
 
         enableStepHeader(stepLayout);
 
-        nextButton.setEnabled(true);
-        nextButton.setAlpha(1);
+//        nextButton.setEnabled(true);
+//        nextButton.setAlpha(1);
 
         if (stepNumber != activeStep) {
             stepDone.setVisibility(View.VISIBLE);
@@ -273,8 +273,8 @@ public class VerticalStepperFormLayout extends RelativeLayout implements View.On
         stepDone.setVisibility(View.INVISIBLE);
         stepNumberTextView.setVisibility(View.VISIBLE);
 
-        nextButton.setEnabled(false);
-        nextButton.setAlpha(alphaOfDisabledElements);
+//        nextButton.setEnabled(false);
+//        nextButton.setAlpha(alphaOfDisabledElements);
 
         if (stepNumber == activeStep) {
             disableNextButtonInBottomNavigationLayout();
